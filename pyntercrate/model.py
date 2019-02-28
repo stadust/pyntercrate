@@ -1,3 +1,10 @@
+# copied from https://stackoverflow.com/questions/750908/auto-repr-method
+class AutoRepr(object):
+    def __repr__(self):
+        items = ("%s = %r" % (k, v) for k, v in self.__dict__.items())
+        return "<%s: {%s}>" % (self.__class__.__name__, ', '.join(items))
+
+
 class ApiException(Exception):
     def __init__(self, **kwargs):
         self.message = kwargs.pop('message')
@@ -7,7 +14,7 @@ class ApiException(Exception):
         super().__init__(self.message)
 
 
-class User(object):
+class User(AutoRepr):
     def __init__(self, **kwargs):
         self.id = kwargs.pop('id')
         self.name = kwargs.pop('name')
@@ -16,14 +23,14 @@ class User(object):
         self.youtube_channel = kwargs.pop('youtube_channel')
 
 
-class ShortPlayer(object):
+class ShortPlayer(AutoRepr):
     def __init__(self, **kwargs):
         self.id = kwargs.pop('id')
         self.name = kwargs.pop('name')
         self.banned = kwargs.pop('banned')
 
 
-class ShortDemon(object):
+class ShortDemon(AutoRepr):
     """
     Models both the short and embedded form mentioned in the API
     """
@@ -35,7 +42,7 @@ class ShortDemon(object):
         self.video = kwargs.get('video')
 
 
-class ShortRecord(object):
+class ShortRecord(AutoRepr):
     """
     Models the embedded form mentioned in the API
     """
@@ -60,7 +67,7 @@ class ShortRecord(object):
             self.demon = None
 
 
-class ShortSubmitter(object):
+class ShortSubmitter(AutoRepr):
     def __init__(self, **kwargs):
         self.id = kwargs.pop('id')
         self.banned = kwargs.pop('banned')
