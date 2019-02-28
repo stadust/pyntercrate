@@ -15,7 +15,9 @@ class ApiException(Exception):
 
 
 class User(AutoRepr):
-    def __init__(self, **kwargs):
+    def __init__(self, etag, **kwargs):
+        self.etag = etag
+
         self.id = kwargs.pop('id')
         self.name = kwargs.pop('name')
         self.permissions = kwargs.pop('permissions')  # TODO: bitmask

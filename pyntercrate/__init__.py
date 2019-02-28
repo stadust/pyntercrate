@@ -46,6 +46,12 @@ class PointercrateClient(object):
 
         return data, pagination_data
 
+    async def me(self):
+        async with self.session.get(f"{self.api_base}auth/me/") as resp:
+            data = await self._resp(resp)
+
+            return User(resp.headers['etag'], **data['data'])
+
     async def demons(self, *, limit=None, after=None, before=None, name=None, requirement=None, min_requirement=None, max_requirement=None):
         params = de_none({
             "limit": limit,
