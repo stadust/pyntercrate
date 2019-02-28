@@ -11,6 +11,11 @@ from urllib.parse import urlparse, parse_qs
 class _Unmodified(object):
     pass
 
+    def __str__(self):
+        return "unmodified"
+
+    __repr__ = __str__
+
 
 Unmodified = _Unmodified()
 
