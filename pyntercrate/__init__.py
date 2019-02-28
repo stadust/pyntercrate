@@ -39,9 +39,10 @@ class PointercrateClient(object):
         pagination_data = dict()
 
         for link in resp.headers['Links'].split(','):
-            ident, url = link.split(';')
-            pagination_data[ident[1:-1]] = {k: v[0]
-                                            for k, v in parse_qs(urlparse(url).query).items()}
+            url, ident = link.split(';')
+            print(ident, url)
+            pagination_data[ident[5:]] = {k: v[0]
+                                          for k, v in parse_qs(urlparse(url[1:-1]).query).items()}
 
         return data, pagination_data
 
@@ -52,14 +53,14 @@ class PointercrateClient(object):
             "before": before,
             "name": name,
             "requirement": requirement,
-            "requirement__gt": min_requirement - 1,
-            "requirement__lt": max_requirement + 1
+            "requirement__gt": None if min_requirement is None else min_requirement - 1,
+            "requirement__lt": None if max_requirement is None else max_requirement + 1
         })
 
         async with self.session.get(self.api_base + "demons/", params=params) as resp:
             data, pagination_data = await self._pagination_resp(resp)
 
-            return ShortDemon(**data), pagination_data
+            return [ShortDemon(**demon) for demon in data], pagination_data
 
     async def demon_at(self, position):
         async with self.session.get(f"{self.api_base}demons/{position}/") as resp:
@@ -128,7 +129,7 @@ class PointercrateClient(object):
         async with self.session.get(self.api_base + "players/", params=params) as resp:
             data, pagination_data = await self._pagination_resp(resp)
 
-            return ShortPlayer(**data), pagination_data
+            return [ShortPlayer(**player) for player in data], pagination_data
 
     async def get_player(self, pid):
         async with self.session.get(f"{self.api_base}players/{pid}/") as resp:
@@ -157,8 +158,8 @@ class PointercrateClient(object):
             "before": before,
             "status": status,
             "progress": progress,
-            "progress__gt": min_progress - 1,
-            "progress__lt": max_progress + 1,
+            "progress__gt": None if min_progress is None else min_progress - 1,
+            "progress__lt": None if max_progress is None else max_progress + 1,
             "player": player,
             "demon": demon
         })
@@ -166,7 +167,7 @@ class PointercrateClient(object):
         async with self.session.get(self.api_base + "records/", params=params) as resp:
             data, pagination_data = await self._pagination_resp(resp)
 
-            return ShortRecord(**data), pagination_data
+            return [ShortRecord(**record) for record in data], pagination_data
 
     async def get_record(self, rid):
         async with self.session.get(f"{self.api_base}records/{rid}/") as resp:
@@ -225,7 +226,7 @@ class PointercrateClient(object):
         async with self.session.get(self.api_base + "submitters/", params=params) as resp:
             data, pagination_data = await self._pagination_resp(resp)
 
-            return ShortSubmitter(**data), pagination_data
+            return [ShortSubmitter(**submitter) for submitter in data], pagination_data
 
     async def get_submitter(self, sid):
         async with self.session.get(f"{self.api_base}submitters/{sid}/") as resp:
