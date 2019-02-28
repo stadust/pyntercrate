@@ -150,13 +150,14 @@ class PointercrateClient(object):
 
             return Player(resp.headers['etag'], **data['data'])
 
-    async def patch_player(self, player: Player, *, banned: bool = Unmodified):
+    async def patch_player(self, player: Player, *, name: str = Unmodified, banned: bool = Unmodified):
         headers = {
             'If-Match': player.etag
         }
 
         json = de_unmod({
             'banned': banned,
+            'name': name
         })
 
         async with self.session.patch(f"{self.api_base}demons/{player.id}/", json=json, headers=headers) as resp:
