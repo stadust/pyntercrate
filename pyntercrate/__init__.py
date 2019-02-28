@@ -2,6 +2,8 @@ from .model import *
 
 from aiohttp import ClientSession
 
+from typing import List
+
 import re
 from urllib.parse import urlparse, parse_qs
 
@@ -52,7 +54,7 @@ class PointercrateClient(object):
 
             return User(resp.headers['etag'], **data['data'])
 
-    async def demons(self, *, limit=None, after=None, before=None, name=None, requirement=None, min_requirement=None, max_requirement=None):
+    async def demons(self, *, limit: int = None, after: int = None, before: int = None, name: str = None, requirement: int = None, min_requirement: int = None, max_requirement: int = None):
         params = de_none({
             "limit": limit,
             "after": after,
@@ -68,13 +70,13 @@ class PointercrateClient(object):
 
             return [ShortDemon(**demon) for demon in data], pagination_data
 
-    async def demon_at(self, position):
+    async def demon_at(self, position: int):
         async with self.session.get(f"{self.api_base}demons/{position}/") as resp:
             data = await self._resp(resp)
 
             return Demon(resp.headers['etag'], **data['data'])
 
-    async def add_demon(self, name, position, requirement, verifier, publisher, creators, video=None):
+    async def add_demon(self, name: str, position: int, requirement: int, verifier: str, publisher: str, creators: List[str], video: str = None):
         json = {
             "name": name,
             "position": position,
@@ -90,7 +92,7 @@ class PointercrateClient(object):
 
             return Demon(resp.headers['etag'], **data['data'])
 
-    async def patch_demon(self, demon: Demon, *, name=Unmodified, position=Unmodified, video=Unmodified, requirement=Unmodified, verifier=Unmodified, publisher=Unmodified):
+    async def patch_demon(self, demon: Demon, *, name: str = Unmodified, position: int = Unmodified, video: str = Unmodified, requirement: int = Unmodified, verifier: str = Unmodified, publisher: str = Unmodified):
         headers = {
             'If-Match': demon.etag
         }
@@ -109,7 +111,7 @@ class PointercrateClient(object):
 
             return Demon(resp.headers['etag'], **data['data'])
 
-    async def add_creator(self, demon: Demon, creator):
+    async def add_creator(self, demon: Demon, creator: str):
         json = {
             "creator": creator
         }
@@ -123,7 +125,7 @@ class PointercrateClient(object):
             if resp.status >= 400:
                 raise ApiException(**(await resp.json()))
 
-    async def players(self, *, limit=None, after=None, before=None, name=None, banned=None):
+    async def players(self, *, limit: int = None, after: int = None, before: int = None, name: str = None, banned: bool = None):
         params = de_none({
             "limit": limit,
             "after": after,
@@ -137,13 +139,13 @@ class PointercrateClient(object):
 
             return [ShortPlayer(**player) for player in data], pagination_data
 
-    async def get_player(self, pid):
+    async def get_player(self, pid: int):
         async with self.session.get(f"{self.api_base}players/{pid}/") as resp:
             data = await self._resp(resp)
 
             return Player(resp.headers['etag'], **data['data'])
 
-    async def patch_player(self, player: Player, *, banned=Unmodified):
+    async def patch_player(self, player: Player, *, banned: bool = Unmodified):
         headers = {
             'If-Match': player.etag
         }
@@ -157,7 +159,7 @@ class PointercrateClient(object):
 
             return Player(resp.headers['etag'], **data['data'])
 
-    async def records(self, *, limit=None, after=None, before=None, progress=None, min_progress=None, max_progress=None, status=None, player=None, demon=None):
+    async def records(self, *, limit: int = None, after: int = None, before: int = None, progress: int = None, min_progress: int = None, max_progress: int = None, status: str = None, player: str = None, demon: str = None):
         params = de_none({
             "limit": limit,
             "after": after,
@@ -175,13 +177,13 @@ class PointercrateClient(object):
 
             return [ShortRecord(**record) for record in data], pagination_data
 
-    async def get_record(self, rid):
+    async def get_record(self, rid: int):
         async with self.session.get(f"{self.api_base}records/{rid}/") as resp:
             data = await self._resp(resp)
 
             return Record(resp.headers['etag'], **data['data'])
 
-    async def add_record(self, progress, player, demon, status, video=None):
+    async def add_record(self, progress: int, player: str, demon: str, status: str = 'submitted', video: str = None):
         json = {
             "progress": progress,
             "player": player,
@@ -195,7 +197,7 @@ class PointercrateClient(object):
 
             return Record(resp.headers['etag'], **data['data'])
 
-    async def patch_record(self, record: Record, *, progress=Unmodified, video=Unmodified, status=Unmodified, player=Unmodified, demon=Unmodified):
+    async def patch_record(self, record: Record, *, progress: int = Unmodified, video: str = Unmodified, status: str = Unmodified, player: str = Unmodified, demon: str = Unmodified):
         headers = {
             'If-Match': record.etag
         }
@@ -221,7 +223,7 @@ class PointercrateClient(object):
             if resp.status >= 400:
                 raise ApiException(**(await resp.json()))
 
-    async def submitters(self, *, limit=None, after=None, before=None, banned=None):
+    async def submitters(self, *, limit: int = None, after: int = None, before: int = None, banned: bool = None):
         params = de_none({
             "limit": limit,
             "after": after,
@@ -234,13 +236,13 @@ class PointercrateClient(object):
 
             return [ShortSubmitter(**submitter) for submitter in data], pagination_data
 
-    async def get_submitter(self, sid):
+    async def get_submitter(self, sid: int):
         async with self.session.get(f"{self.api_base}submitters/{sid}/") as resp:
             data = await self._resp(resp)
 
             return Submitter(resp.headers['etag'], **data['data'])
 
-    async def patch_submitter(self, submitter: Submitter, *, banned=Unmodified):
+    async def patch_submitter(self, submitter: Submitter, *, banned: bool = Unmodified):
         headers = {
             'If-Match': submitter.etag
         }
