@@ -1,11 +1,9 @@
-from .model import *
+from typing import List
+from urllib.parse import parse_qs, urlparse
 
 from aiohttp import ClientSession
 
-from typing import List
-
-import re
-from urllib.parse import urlparse, parse_qs
+from .model import *
 
 
 class _Unmodified(object):
@@ -45,11 +43,12 @@ class PointercrateClient(object):
 
         pagination_data = dict()
 
-        for link in resp.headers['Links'].split(','):
-            url, ident = link.split(';')
-            print(ident, url)
-            pagination_data[ident[5:]] = {k: v[0]
-                                          for k, v in parse_qs(urlparse(url[1:-1]).query).items()}
+        if resp.headers['Links']:
+            for link in resp.headers['Links'].split(','):
+                url, ident = link.split(';')
+                print(ident, url)
+                pagination_data[ident[5:]] = {k: v[0]
+                                              for k, v in parse_qs(urlparse(url[1:-1]).query).items()}
 
         return data, pagination_data
 

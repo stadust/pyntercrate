@@ -5,6 +5,6 @@ setup(
     author='stadust',
     description='A minimal pointercrate API wrapper',
     packages=find_packages(),
-    version='1.0.5',
+    version='1.0.6',
     install_requires=['aiohttp==3.5.4']
 )
