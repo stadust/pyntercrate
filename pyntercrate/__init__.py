@@ -34,6 +34,8 @@ class PointercrateClient(object):
 
     async def _resp(self, resp):
         if resp.status < 400:
+            if resp.status == 304:
+                return dict()
             return await resp.json()
         else:
             raise ApiException(**(await resp.json()))
@@ -113,6 +115,9 @@ class PointercrateClient(object):
         async with self.session.patch(f"{self.api_base}demons/{demon.position}/", json=json, headers=headers) as resp:
             data = await self._resp(resp)
 
+            if not data:
+                return demon
+
             return Demon(resp.headers['etag'], **data['data'])
 
     async def add_creator(self, demon: Demon, creator: str):
@@ -161,6 +166,9 @@ class PointercrateClient(object):
 
         async with self.session.patch(f"{self.api_base}demons/{player.id}/", json=json, headers=headers) as resp:
             data = await self._resp(resp)
+
+            if not data:
+                return player
 
             return Player(resp.headers['etag'], **data['data'])
 
@@ -218,6 +226,9 @@ class PointercrateClient(object):
         async with self.session.patch(f"{self.api_base}records/{record.id}/", json=json, headers=headers) as resp:
             data = await self._resp(resp)
 
+            if not data:
+                return record
+
             return Record(resp.headers['etag'], **data['data'])
 
     async def delete_record(self, record: Record):
@@ -258,6 +269,9 @@ class PointercrateClient(object):
 
         async with self.session.patch(f"{self.api_base}submitters/{submitter.id}/", json=json, headers=headers) as resp:
             data = await self._resp(resp)
+
+            if not data:
+                return submitter
 
             return Submitter(resp.headers['etag'], **data['data'])
 
