@@ -164,7 +164,7 @@ class PointercrateClient(object):
             'name': name
         })
 
-        async with self.session.patch(f"{self.api_base}demons/{player.id}/", json=json, headers=headers) as resp:
+        async with self.session.patch(f"{self.api_base}players/{player.id}/", json=json, headers=headers) as resp:
             data = await self._resp(resp)
 
             if not data:
