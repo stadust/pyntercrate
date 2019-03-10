@@ -11,7 +11,10 @@ class ApiException(Exception):
         self.code = kwargs.pop('code')
         self.data = kwargs.pop('data')
 
-        super().__init__(self.message)
+        if self.data:
+            super().__init__(f'{self.code}: {self.message}\n' + "\n".join([f'{k}: {v}' for k, v in self.data.items()]))
+        else:
+            super().__init__(f'{self.code}: {self.message}')
 
 
 class User(AutoRepr):
