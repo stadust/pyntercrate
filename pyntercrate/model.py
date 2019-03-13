@@ -17,6 +17,12 @@ class ApiException(Exception):
             super().__init__(f'{self.code}: {self.message}')
 
 
+class Nationality(AutoRepr):
+    def __init__(self, **kwargs):
+        self.nation = kwargs.pop('nation')
+        self.country_code = kwargs.pop('country_code')
+
+
 class User(AutoRepr):
     def __init__(self, etag, **kwargs):
         self.etag = etag
@@ -28,11 +34,18 @@ class User(AutoRepr):
         self.youtube_channel = kwargs.pop('youtube_channel')
 
 
-class ShortPlayer(AutoRepr):
+class EmbeddedPlayer(AutoRepr):
     def __init__(self, **kwargs):
         self.id = kwargs.pop('id')
         self.name = kwargs.pop('name')
         self.banned = kwargs.pop('banned')
+
+
+class ShortPlayer(EmbeddedPlayer):
+    def __init__(self, **kwargs):
+        self.nationality = Nationality(**kwargs.pop('nationality'))
+
+        super().__init__(**kwargs)
 
 
 class ShortDemon(AutoRepr):
@@ -62,7 +75,7 @@ class ShortRecord(AutoRepr):
         demon = kwargs.get('demon')
 
         if player is not None:
-            self.player = ShortPlayer(**player)
+            self.player = EmbeddedPlayer(**player)
         else:
             self.player = None
 
@@ -106,13 +119,13 @@ class Demon(ShortDemon):
     def __init__(self, etag, **kwargs):
         self.etag = etag
         self.requirement = kwargs.pop('requirement')
-        self.verifier = ShortPlayer(**kwargs.pop('verifier'))
-        self.creators = [ShortPlayer(**creator)
+        self.verifier = EmbeddedPlayer(**kwargs.pop('verifier'))
+        self.creators = [EmbeddedPlayer(**creator)
                          for creator in kwargs.pop('creators')]
         self.records = [ShortRecord(**record)
                         for record in kwargs.pop('records')]
 
-        publisher = ShortPlayer(**kwargs.pop('publisher'))
+        publisher = EmbeddedPlayer(**kwargs.pop('publisher'))
 
         super().__init__(**kwargs, publisher=publisher)
 
