@@ -60,7 +60,8 @@ class PointercrateClient(object):
 
             return User(resp.headers['etag'], **data['data'])
 
-    async def demons(self, *, limit: int = None, after: int = None, before: int = None, name: str = None, requirement: int = None, min_requirement: int = None, max_requirement: int = None):
+    async def demons(self, *, limit: int = None, after: int = None, before: int = None, name: str = None,
+                     requirement: int = None, min_requirement: int = None, max_requirement: int = None):
         params = de_none({
             "limit": limit,
             "after": after,
@@ -82,7 +83,8 @@ class PointercrateClient(object):
 
             return Demon(resp.headers['etag'], **data['data'])
 
-    async def add_demon(self, name: str, position: int, requirement: int, verifier: str, publisher: str, creators: List[str], video: str = None):
+    async def add_demon(self, name: str, position: int, requirement: int, verifier: str, publisher: str,
+                        creators: List[str], video: str = None):
         json = {
             "name": name,
             "position": position,
@@ -98,7 +100,9 @@ class PointercrateClient(object):
 
             return Demon(resp.headers['etag'], **data['data'])
 
-    async def patch_demon(self, demon: Demon, *, name: str = Unmodified, position: int = Unmodified, video: str = Unmodified, requirement: int = Unmodified, verifier: str = Unmodified, publisher: str = Unmodified):
+    async def patch_demon(self, demon: Demon, *, name: str = Unmodified, position: int = Unmodified,
+                          video: str = Unmodified, requirement: int = Unmodified, verifier: str = Unmodified,
+                          publisher: str = Unmodified):
         headers = {
             'If-Match': demon.etag
         }
@@ -134,7 +138,8 @@ class PointercrateClient(object):
             if resp.status >= 400:
                 raise ApiException(**(await resp.json()))
 
-    async def players(self, *, limit: int = None, after: int = None, before: int = None, name: str = None, banned: bool = None):
+    async def players(self, *, limit: int = None, after: int = None, before: int = None, name: str = None,
+                      banned: bool = None):
         params = de_none({
             "limit": limit,
             "after": after,
@@ -154,14 +159,16 @@ class PointercrateClient(object):
 
             return Player(resp.headers['etag'], **data['data'])
 
-    async def patch_player(self, player: Player, *, name: str = Unmodified, banned: bool = Unmodified):
+    async def patch_player(self, player: Player, *, name: str = Unmodified, banned: bool = Unmodified,
+                           nationality: str = Unmodified):
         headers = {
             'If-Match': player.etag
         }
 
         json = de_unmod({
             'banned': banned,
-            'name': name
+            'name': name,
+            'nationality': nationality
         })
 
         async with self.session.patch(f"{self.api_base}players/{player.id}/", json=json, headers=headers) as resp:
@@ -172,7 +179,9 @@ class PointercrateClient(object):
 
             return Player(resp.headers['etag'], **data['data'])
 
-    async def records(self, *, limit: int = None, after: int = None, before: int = None, progress: int = None, min_progress: int = None, max_progress: int = None, status: str = None, player: str = None, demon: str = None):
+    async def records(self, *, limit: int = None, after: int = None, before: int = None, progress: int = None,
+                      min_progress: int = None, max_progress: int = None, status: str = None, player: str = None,
+                      demon: str = None):
         params = de_none({
             "limit": limit,
             "after": after,
@@ -210,7 +219,8 @@ class PointercrateClient(object):
 
             return Record(resp.headers['etag'], **data['data'])
 
-    async def patch_record(self, record: Record, *, progress: int = Unmodified, video: str = Unmodified, status: str = Unmodified, player: str = Unmodified, demon: str = Unmodified):
+    async def patch_record(self, record: Record, *, progress: int = Unmodified, video: str = Unmodified,
+                           status: str = Unmodified, player: str = Unmodified, demon: str = Unmodified):
         headers = {
             'If-Match': record.etag
         }
