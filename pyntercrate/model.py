@@ -43,7 +43,10 @@ class EmbeddedPlayer(AutoRepr):
 
 class ShortPlayer(EmbeddedPlayer):
     def __init__(self, **kwargs):
-        self.nationality = Nationality(**kwargs.pop('nationality'))
+        if 'nationality' in kwargs:
+            self.nationality = Nationality(**kwargs.pop('nationality'))
+        else:
+            self.nationality = None
 
         super().__init__(**kwargs)
 
