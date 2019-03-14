@@ -139,13 +139,14 @@ class PointercrateClient(object):
                 raise ApiException(**(await resp.json()))
 
     async def players(self, *, limit: int = None, after: int = None, before: int = None, name: str = None,
-                      banned: bool = None):
+                      banned: bool = None, nationality: str = None):
         params = de_none({
             "limit": limit,
             "after": after,
             "before": before,
             "name": name,
-            "banned": banned
+            "banned": banned,
+            "nationality": nationality
         })
 
         async with self.session.get(self.api_base + "players/", params=params) as resp:
